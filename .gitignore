@@ -19,6 +19,7 @@ target/
 .vscode/
 .iml
 .gradle/
+.direnv/
 
 dependency-reduced-pom.xml
 shading.bmp
