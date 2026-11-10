@@ -319,7 +319,8 @@ public final class HelpHelpAction extends GuiAction {
         final JLabel helpRemarksLabel = new JLabel(helpRemarks, JLabel.CENTER);
         helpRemarksLabel.setOpaque(true);
         helpRemarksLabel.setBackground(Color.decode("0x" + helpRemarksColor));
-        helpRemarksLabel.setForeground(Color.BLACK);
+        helpRemarksLabel.setForeground(
+            rars.settings.HighlightingDefaults.bestForeground(Color.decode("0x" + helpRemarksColor)));
         final JScrollPane operandsScrollPane = new JScrollPane(
             helpRemarksLabel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS

@@ -149,8 +149,10 @@ public final class SettingsMemoryConfigurationAction extends GuiAction {
                 choices.add(button);
                 chooserPanel.add(button);
             }
+            final var borderColor = UIManager.getColor("Separator.foreground") != null
+                ? UIManager.getColor("Separator.foreground") : Color.GRAY;
             chooserPanel.setBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Configuration"));
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(borderColor), "Configuration"));
             return chooserPanel;
         }
 

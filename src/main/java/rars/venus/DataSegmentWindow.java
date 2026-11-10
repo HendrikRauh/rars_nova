@@ -11,6 +11,7 @@ import rars.notices.MemoryAccessNotice;
 import rars.notices.SimulatorNotice;
 import rars.riscv.hardware.MemoryConfiguration;
 import rars.settings.BoolSetting;
+import rars.settings.HighlightingDefaults;
 import rars.util.BinaryUtils;
 import rars.util.ConversionUtils;
 import rars.util.ListenerDispatcher;
@@ -551,6 +552,10 @@ public final class DataSegmentWindow extends JInternalFrame {
             DataSegmentWindow.dataTable.getColumnModel().getColumn(i).setCellRenderer(addressCellRenderer);
         }
         HIGHLIGHTING_SETTINGS.onChangeListenerHook.subscribe(ignore -> dataTable.repaint());
+        EDITOR_THEME_SETTINGS.onChangeListenerHook.subscribe(ignore -> {
+            dataTable.revalidate();
+            dataTable.repaint();
+        });
         this.dataTableScroller = new JScrollPane(
             DataSegmentWindow.dataTable,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -1118,8 +1123,10 @@ public final class DataSegmentWindow extends JInternalFrame {
                     rowFirstAddress == DataSegmentWindow.this.addressRowFirstAddress &&
                     column == DataSegmentWindow.this.addressColumn) {
                 final var style = HIGHLIGHTING_SETTINGS.getDataSegmentHighlightingStyle();
-                cell.setBackground(style.background());
-                cell.setForeground(style.foreground());
+                final var background = style.background();
+                cell.setBackground(background != null ? background : Globals.EDITOR_THEME_SETTINGS.getCurrentTheme().backgroundColor);
+                final var foreground = style.foreground();
+                cell.setForeground(foreground != null ? foreground : HighlightingDefaults.bestForeground(background));
                 cell.setFont(deriveFontFromStyle(defaultFont, style));
             } else {
                 cell.setBackground(theme.backgroundColor);

@@ -87,7 +87,8 @@ public final class CacheSimulator extends AbstractTool {
     // Some GUI settings
     private final EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
     private final Font countFonts = new Font("Times", Font.BOLD, 12);
-    private final Color backgroundColor = Color.WHITE;
+    private final Color backgroundColor = UIManager.getColor("Panel.background") != null
+        ? UIManager.getColor("Panel.background") : Color.WHITE;
     // RNG used for random replacement policy. For testing, set seed for
     // reproducible stream
     private final Random randu = new Random(0);
@@ -185,12 +186,18 @@ public final class CacheSimulator extends AbstractTool {
                 CacheSimulator.debug = e.getStateChange() == ItemEvent.SELECTED;
                 this.resetLogDisplay();
                 this.logText.setEnabled(CacheSimulator.debug);
-                this.logText.setBackground(CacheSimulator.debug ? Color.WHITE : this.logPanel.getBackground());
+                this.logText.setBackground(
+                    CacheSimulator.debug
+                        ? (UIManager.getColor("TextArea.background") != null ? UIManager.getColor("TextArea.background") : Color.WHITE)
+                        : this.logPanel.getBackground());
             });
         this.logPanel.add(logShow);
         this.logText = new JTextArea(5, 70);
         this.logText.setEnabled(CacheSimulator.debug);
-        this.logText.setBackground(CacheSimulator.debug ? Color.WHITE : this.logPanel.getBackground());
+        this.logText.setBackground(
+            CacheSimulator.debug
+                ? (UIManager.getColor("TextArea.background") != null ? UIManager.getColor("TextArea.background") : Color.WHITE)
+                : this.logPanel.getBackground());
         this.logText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         this.logText.setToolTipText("Displays cache activity log if enabled");
         final JScrollPane logScroll = new JScrollPane(
@@ -859,7 +866,8 @@ public final class CacheSimulator extends AbstractTool {
 
         public final Color hitColor = Color.GREEN;
         public final Color missColor = Color.RED;
-        public final Color defaultColor = Color.WHITE;
+        public final Color defaultColor = UIManager.getColor("Panel.background") != null
+            ? UIManager.getColor("Panel.background") : Color.WHITE;
         private final Box animation;
         private JTextField[] blocks;
 

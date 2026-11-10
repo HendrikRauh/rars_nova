@@ -13,6 +13,7 @@ import rars.settings.*;
 import rars.simulator.Simulator;
 import rars.venus.VenusUI;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.prefs.Preferences;
@@ -115,6 +116,37 @@ public final class Globals {
 
         OTHER_SETTINGS = new OtherSettings(settingsPreferences);
         BOOL_SETTINGS = new BoolSettings(settingsPreferences);
+        // Link the default editor theme to the dark-mode setting before the editor
+        // theme settings are constructed, so the fallback theme matches the LAF.
+        final boolean isDarkMode = BOOL_SETTINGS.getSetting(BoolSetting.DARK_MODE);
+        if (isDarkMode) {
+            SettingsTheme.DEFAULT_THEME = SettingsThemePresets.DARK_THEME;
+        }
+        // Reconcile persisted editor-theme preferences with the dark-mode setting:
+        // a runtime toggle persists the matching preset, but if dark mode was
+        // flipped externally (or the persisted theme is stale), the stored colors
+        // can disagree with the LAF. In that case drop the persisted Theme* keys so
+        // loadThemeFromPreferences falls back to the matching default preset.
+        try {
+            final String persistedBackground = settingsPreferences.get("ThemeBackground", null);
+            if (persistedBackground != null) {
+                final Color persistedColor = Color.decode(persistedBackground);
+                final double luminance = 0.299 * persistedColor.getRed()
+                    + 0.587 * persistedColor.getGreen()
+                    + 0.114 * persistedColor.getBlue();
+                final boolean persistedIsDark = luminance < 128;
+                if (persistedIsDark != isDarkMode) {
+                    for (final String key : settingsPreferences.keys()) {
+                        if (key.startsWith("Theme")) {
+                            settingsPreferences.remove(key);
+                        }
+                    }
+                    settingsPreferences.flush();
+                }
+            }
+        } catch (final Exception ignored) {
+            // Fall through: default theme applies.
+        }
         EDITOR_THEME_SETTINGS = new EditorThemeSettings(settingsPreferences);
         FONT_SETTINGS = new FontSettings(settingsPreferences);
         HIGHLIGHTING_SETTINGS = new HighlightingSettings(settingsPreferences);

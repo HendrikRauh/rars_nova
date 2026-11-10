@@ -84,6 +84,18 @@ public final class EditorThemeSettings {
         this.currentTheme = currentTheme;
     }
 
+    /**
+     * Switches the current theme to the given theme and notifies all registered
+     * listeners so that components (such as the editor) re-apply it. Unlike
+     * {@link #saveSettingsToPreferences()}, this does not persist the change.
+     */
+    public void setCurrentThemeAndNotify(@NotNull final SettingsTheme currentTheme) {
+        this.currentTheme = currentTheme;
+        this.backupTheme = currentTheme.clone();
+        this.onChangeDispatcher.dispatch(null);
+    }
+
+
     // endregion Preferences prefix methods
 
     /**

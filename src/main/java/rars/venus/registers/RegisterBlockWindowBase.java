@@ -9,6 +9,7 @@ import rars.notices.SimulatorNotice;
 import rars.riscv.hardware.registerFiles.RegisterFileBase;
 import rars.riscv.hardware.registers.Register;
 import rars.settings.BoolSetting;
+import rars.settings.HighlightingDefaults;
 import rars.util.BinaryUtils;
 import rars.util.ListenerDispatcher;
 import rars.venus.NumberDisplayBaseChooser;
@@ -136,7 +137,10 @@ public abstract class RegisterBlockWindowBase extends JPanel {
         valueColumn.setCellRenderer(new RegisterCellRenderer(SwingConstants.RIGHT, table));
 
         HIGHLIGHTING_SETTINGS.onChangeListenerHook.subscribe(ignored -> this.table.repaint());
-
+        EDITOR_THEME_SETTINGS.onChangeListenerHook.subscribe(ignored -> {
+            this.table.revalidate();
+            this.table.repaint();
+        });
         this.table.setPreferredScrollableViewportSize(new Dimension(
             RegisterBlockWindowBase.NAME_SIZE + RegisterBlockWindowBase.NUMBER_SIZE + RegisterBlockWindowBase.VALUE_SIZE,
             700
@@ -288,8 +292,10 @@ public abstract class RegisterBlockWindowBase extends JPanel {
             cell.setHorizontalAlignment(this.alignment);
             if (BOOL_SETTINGS.getSetting(BoolSetting.REGISTERS_HIGHLIGHTING) && doHighlighting && row == highlightRow) {
                 final var highlightingStyle = Globals.HIGHLIGHTING_SETTINGS.getRegisterHighlightingStyle();
-                cell.setForeground(highlightingStyle.foreground());
-                cell.setBackground(highlightingStyle.background());
+                final var background = highlightingStyle.background();
+                cell.setBackground(background != null ? background : Globals.EDITOR_THEME_SETTINGS.getCurrentTheme().backgroundColor);
+                final var foreground = highlightingStyle.foreground();
+                cell.setForeground(foreground != null ? foreground : HighlightingDefaults.bestForeground(background));
             } else {
                 final var theme = EDITOR_THEME_SETTINGS.getCurrentTheme();
                 cell.setForeground(theme.foregroundColor);

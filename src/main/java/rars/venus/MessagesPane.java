@@ -129,7 +129,7 @@ public final class MessagesPane extends JTabbedPane {
                             || text.startsWith(ErrorList.WARNING_MESSAGE_PREFIX)) {
                             MessagesPane.this.assembleTextArea.select(lineStart, lineEnd);
                             MessagesPane.this.assembleTextArea.setSelectionColor(Color.YELLOW);
-                            MessagesPane.this.assembleTextArea.setSelectedTextColor(Color.BLACK);
+                            MessagesPane.this.assembleTextArea.setSelectedTextColor(MessagesPane.contrastingTextColor(Color.YELLOW));
                             MessagesPane.this.assembleTextArea.repaint();
                             final int separatorPosition = text.indexOf(ErrorList.MESSAGE_SEPARATOR);
                             if (separatorPosition >= 0) {
@@ -200,6 +200,13 @@ public final class MessagesPane extends JTabbedPane {
         this.setToolTipTextAt(1, "Simulated console input and output");
     }
 
+    private static @NotNull Color contrastingTextColor(final @NotNull Color background) {
+        final double luminance = 0.2126 * background.getRed()
+            + 0.7152 * background.getGreen()
+            + 0.0722 * background.getBlue();
+        return luminance > 127.5 ? Color.BLACK : Color.WHITE;
+    }
+
     // Center given button in a box, centered vertically and 6 pixels on left and
     // right
     private static @NotNull Box createBoxForButton(final JButton button) {
@@ -237,7 +244,7 @@ public final class MessagesPane extends JTabbedPane {
                 final int lineStart = this.assembleTextArea.getLineStartOffset(textLine);
                 final int lineEnd = this.assembleTextArea.getLineEndOffset(textLine);
                 this.assembleTextArea.setSelectionColor(Color.YELLOW);
-                this.assembleTextArea.setSelectedTextColor(Color.BLACK);
+                this.assembleTextArea.setSelectedTextColor(MessagesPane.contrastingTextColor(Color.YELLOW));
                 this.assembleTextArea.select(lineStart, lineEnd);
                 this.assembleTextArea.getCaret().setSelectionVisible(true);
                 this.assembleTextArea.repaint();

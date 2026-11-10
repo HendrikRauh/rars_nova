@@ -415,6 +415,10 @@ public final class LabelsWindow extends JInternalFrame {
             this.labelTable.getColumnModel()
                 .getColumn(LabelsWindow.ADDRESS_COLUMN)
                 .setCellRenderer(new MonoRightCellRenderer());
+            Globals.EDITOR_THEME_SETTINGS.onChangeListenerHook.subscribe(ignored -> {
+                this.labelTable.revalidate();
+                this.labelTable.repaint();
+            });
             return this.labelTable;
         }
 

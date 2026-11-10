@@ -75,7 +75,8 @@ public final class MemoryReferenceVisualization extends AbstractTool {
     private static final int COUNT_INDEX_INIT = 10; // array element #10, arbitrary starting point
     // Some GUI settings
     private final EmptyBorder emptyBorder = new EmptyBorder(4, 4, 4, 4);
-    private final Color backgroundColor = Color.WHITE;
+    private final Color backgroundColor = UIManager.getColor("Panel.background") != null
+        ? UIManager.getColor("Panel.background") : Color.WHITE;
     // This array of (count,color) pairs must be kept sorted! count is low end of
     // subrange.
     // This array will grow if user adds colors at additional counter points (see

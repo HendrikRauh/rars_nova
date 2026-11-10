@@ -12,6 +12,7 @@ import rars.notices.AccessNotice;
 import rars.notices.MemoryAccessNotice;
 import rars.notices.SimulatorNotice;
 import rars.settings.BoolSetting;
+import rars.settings.HighlightingDefaults;
 import rars.util.BinaryUtils;
 import rars.util.FontUtilities;
 import rars.util.ListenerDispatcher;
@@ -220,7 +221,10 @@ public final class TextSegmentWindow extends JInternalFrame {
 
         // updates the existing table view with new highlighting colours
         HIGHLIGHTING_SETTINGS.onChangeListenerHook.subscribe(ignore -> this.table.repaint());
-
+        EDITOR_THEME_SETTINGS.onChangeListenerHook.subscribe(ignore -> {
+            this.table.revalidate();
+            this.table.repaint();
+        });
         // prevents cells in row from being highlighted when user clicks on breakpoint
         // checkbox
         this.table.setRowSelectionAllowed(false);
@@ -932,8 +936,10 @@ public final class TextSegmentWindow extends JInternalFrame {
 
             if (highlighting && textSegment.getIntCodeAddressAtRow(row) == TextSegmentWindow.this.highlightAddress) {
                 final var style = HIGHLIGHTING_SETTINGS.getTextSegmentHighlightingStyle();
-                cell.setBackground(style.background());
-                cell.setForeground(style.foreground());
+                final var background = style.background();
+                cell.setBackground(background != null ? background : Globals.EDITOR_THEME_SETTINGS.getCurrentTheme().backgroundColor);
+                final var foreground = style.foreground();
+                cell.setForeground(foreground != null ? foreground : HighlightingDefaults.bestForeground(background));
                 cell.setFont(deriveFontFromStyle(FONT_SETTINGS.getCurrentFont(), style));
             } else {
                 final var theme = Globals.EDITOR_THEME_SETTINGS.getCurrentTheme();

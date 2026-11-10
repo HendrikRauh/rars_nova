@@ -663,6 +663,27 @@ public final class VenusUI extends JFrame {
         try {
             UIManager.setLookAndFeel(lookAndFeel);
             SwingUtilities.updateComponentTreeUI(this);
+
+            // Only re-link the editor theme when toggling at runtime (mainPane is
+            // already constructed). At startup the initial theme is resolved via
+            // Globals/DEFAULT_THEME and persisted preferences.
+            if (this.mainPane != null) {
+                final var preset = isDarkMode
+                    ? rars.settings.SettingsThemePresets.DARK_THEME
+                    : rars.settings.SettingsThemePresets.LIGHT_THEME;
+                Globals.EDITOR_THEME_SETTINGS.setCurrentThemeAndNotify(preset);
+                Globals.EDITOR_THEME_SETTINGS.saveSettingsToPreferences();
+
+                // HACK: Because Swing/RSyntaxTextArea may reset parts of their state
+                // when the component tree is updated, manually restore theme + font on
+                // all open editors.
+                final var tabbedPane = this.mainPane.editTabbedPane.getTabbedPane();
+                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+                    final var editPane = (EditPane) tabbedPane.getComponentAt(i);
+                    editPane.sourceCode.setTheme(Globals.EDITOR_THEME_SETTINGS.getCurrentTheme().toEditorTheme());
+                    editPane.sourceCode.setFont(Globals.FONT_SETTINGS.getCurrentFont());
+                }
+            }
         } catch (final UnsupportedLookAndFeelException e) {
             LOGGER.error("Error when loading look and feel.", e);
         }

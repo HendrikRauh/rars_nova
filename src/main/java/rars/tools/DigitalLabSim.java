@@ -390,7 +390,8 @@ public final class DigitalLabSim extends AbstractTool {
             this.button = new JButton[16];
             for (int i = 0; i < 16; i++) {
                 this.button[i] = new JButton(Integer.toHexString(i));
-                this.button[i].setBackground(Color.WHITE);
+                this.button[i].setBackground(
+                    UIManager.getColor("Button.background") != null ? UIManager.getColor("Button.background") : Color.WHITE);
                 this.button[i].setMargin(new Insets(10, 10, 10, 10));
                 this.button[i].addMouseListener(new EcouteurClick(i));
                 this.add(this.button[i]);
@@ -400,7 +401,8 @@ public final class DigitalLabSim extends AbstractTool {
         public void resetHexaKeyboard() {
             DigitalLabSim.KeyBoardValueButtonClick = -1;
             for (int i = 0; i < 16; i++) {
-                this.button[i].setBackground(Color.WHITE);
+                this.button[i].setBackground(
+                    UIManager.getColor("Button.background") != null ? UIManager.getColor("Button.background") : Color.WHITE);
             }
         }
 
@@ -433,7 +435,8 @@ public final class DigitalLabSim extends AbstractTool {
                     DigitalLabSim.KeyBoardValueButtonClick = -1;
                     DigitalLabSim.this.updateMMIOControlAndData(DigitalLabSim.this.OUT_ADRESS_HEXA_KEYBOARD, 0);
                     for (int i = 0; i < 16; i++) {
-                        HexaKeyboard.this.button[i].setBackground(Color.WHITE);
+                        HexaKeyboard.this.button[i].setBackground(
+                            UIManager.getColor("Button.background") != null ? UIManager.getColor("Button.background") : Color.WHITE);
                     }
                 } else { // new button pressed
                     DigitalLabSim.KeyBoardValueButtonClick = this.buttonValue;
