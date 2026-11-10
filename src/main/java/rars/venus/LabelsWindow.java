@@ -455,15 +455,15 @@ public final class LabelsWindow extends JInternalFrame {
 
         /**
          * Implement cell tool tips. All of them are the same (although they could be
-         * customized).
+         * customized). Resolved via getToolTipText instead of prepareRenderer so that
+         * tooltip handling stays out of the paint path.
          */
         @Override
-        public Component prepareRenderer(final TableCellRenderer renderer, final int rowIndex, final int vColIndex) {
-            final Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-            if (c instanceof final JComponent jc) {
-                jc.setToolTipText("Click on label or address to view it in Text/Data Segment");
+        public String getToolTipText(final MouseEvent e) {
+            if (this.rowAtPoint(e.getPoint()) < 0) {
+                return null;
             }
-            return c;
+            return "Click on label or address to view it in Text/Data Segment";
         }
 
         /**
@@ -483,7 +483,13 @@ public final class LabelsWindow extends JInternalFrame {
             public String getToolTipText(final MouseEvent e) {
                 final Point p = e.getPoint();
                 final int index = this.columnModel.getColumnIndexAtX(p.x);
+                if (index < 0) {
+                    return null;
+                }
                 final int realIndex = this.columnModel.getColumn(index).getModelIndex();
+                if (realIndex < 0 || realIndex >= LabelsWindow.columnToolTips.length) {
+                    return null;
+                }
                 return LabelsWindow.columnToolTips[realIndex];
             }
 

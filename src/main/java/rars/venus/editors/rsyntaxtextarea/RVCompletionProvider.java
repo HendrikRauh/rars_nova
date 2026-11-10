@@ -50,12 +50,23 @@ public final class RVCompletionProvider extends DefaultCompletionProvider implem
 
     @Override
     public String getToolTipText(RTextArea textArea, MouseEvent e) {
-        final var completions = getCompletionsAt(textArea, e.getPoint());
-        if (completions != null && !completions.isEmpty()) {
-            return completions.getFirst().getToolTipText();
-        } else {
+        final int offset = textArea.viewToModel2D(e.getPoint());
+        if (offset < 0 || offset > textArea.getDocument().getLength()) {
             return null;
         }
+        final var completions = getCompletionsAt(textArea, e.getPoint());
+        if (completions == null || completions.isEmpty()) {
+            return null;
+        }
+        // Prefer the most specific (shortest input text) completion so that hovering
+        // `add` does not show `addi`'s tooltip, and so boundary flicker is reduced.
+        var best = completions.getFirst();
+        for (final var completion : completions) {
+            if (completion.getInputText().length() < best.getInputText().length()) {
+                best = completion;
+            }
+        }
+        return best.getToolTipText();
     }
 
     @Override

@@ -1164,10 +1164,17 @@ public final class DataSegmentWindow extends JInternalFrame {
                     final String tip = null;
                     final Point p = e.getPoint();
                     final int index = this.columnModel.getColumnIndexAtX(p.x);
+                    if (index < 0) {
+                        return null;
+                    }
                     final int realIndex = this.columnModel.getColumn(index).getModelIndex();
-                    return (realIndex < 2) ? MyTippedJTable.this.columnToolTips[realIndex]
+                    final var tips = MyTippedJTable.this.columnToolTips;
+                    if (realIndex < 0 || realIndex >= tips.length) {
+                        return null;
+                    }
+                    return (realIndex < 2) ? tips[realIndex]
                         :
-                            MyTippedJTable.this.columnToolTips[2] + ((realIndex - 1) * 4) + MyTippedJTable.this.columnToolTips[3];
+                            tips[2] + ((realIndex - 1) * 4) + tips[3];
                 }
             };
         }

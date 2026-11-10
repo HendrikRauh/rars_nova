@@ -77,7 +77,7 @@ public final class RSyntaxTextAreaBasedEditor implements TextEditingArea {
         this.textArea.setSyntaxEditingStyle(SYNTAX_STYLE_RISCV);
         this.textArea.setCodeFoldingEnabled(true);
         this.textArea.setMarkOccurrences(true);
-        this.textArea.setMarkOccurrencesDelay(1);
+        this.textArea.setMarkOccurrencesDelay(300);
 
         // auto completion
         final var provider = new RVCompletionProvider(
@@ -96,6 +96,10 @@ public final class RSyntaxTextAreaBasedEditor implements TextEditingArea {
         // tool tips
         this.textArea.setToolTipSupplier(provider);
         ToolTipManager.sharedInstance().registerComponent(this.textArea);
+        final var toolTipManager = ToolTipManager.sharedInstance();
+        toolTipManager.setInitialDelay(300);
+        toolTipManager.setReshowDelay(200);
+        toolTipManager.setDismissDelay(5000);
     }
 
     @Override

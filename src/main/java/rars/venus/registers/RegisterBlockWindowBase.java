@@ -421,13 +421,17 @@ public abstract class RegisterBlockWindowBase extends JPanel {
             final java.awt.Point p = e.getPoint();
             final int rowIndex = this.rowAtPoint(p);
             final int colIndex = this.columnAtPoint(p);
+            if (rowIndex < 0 || colIndex < 0) {
+                return null;
+            }
             final int realColumnIndex = this.convertColumnIndexToModel(colIndex);
-            if (realColumnIndex == RegisterBlockWindowBase.NAME_COLUMN) { // Register name column
+            if (realColumnIndex == RegisterBlockWindowBase.NAME_COLUMN
+                && rowIndex < this.regToolTips.length) { // Register name column
                 return this.regToolTips[rowIndex];
             } else {
                 // You can omit this part if you know you don't have any
                 // renderers that supply their own tool tips.
-                return super.getToolTipText(e);
+                return null;
             }
         }
 
@@ -439,7 +443,13 @@ public abstract class RegisterBlockWindowBase extends JPanel {
                 public String getToolTipText(final MouseEvent e) {
                     final java.awt.Point p = e.getPoint();
                     final int index = this.columnModel.getColumnIndexAtX(p.x);
+                    if (index < 0) {
+                        return null;
+                    }
                     final int realIndex = this.columnModel.getColumn(index).getModelIndex();
+                    if (realIndex < 0 || realIndex >= MyTippedJTable.this.columnToolTips.length) {
+                        return null;
+                    }
                     return MyTippedJTable.this.columnToolTips[realIndex];
                 }
             };

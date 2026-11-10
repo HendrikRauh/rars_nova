@@ -1099,8 +1099,12 @@ public final class TextSegmentWindow extends JInternalFrame {
             public String getToolTipText(final MouseEvent e) {
                 final Point p = e.getPoint();
                 final int index = this.columnModel.getColumnIndexAtX(p.x);
+                if (index < 0) {
+                    return null;
+                }
                 final int realIndex = this.columnModel.getColumn(index).getModelIndex();
-                return requireNonNull(ColumnData.fromInt(realIndex)).description;
+                final var columnData = ColumnData.fromInt(realIndex);
+                return columnData == null ? null : columnData.description;
             }
 
             /// When user clicks on beakpoint column header, breakpoints are
